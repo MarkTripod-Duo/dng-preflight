@@ -1,0 +1,88 @@
+snapshot:
+  captured_at: '2026-05-12T12:00:00+00:00'
+  hostname_planned: dng.example.com
+  system:
+    detected: true
+    platform: linux
+    distro: ubuntu
+    distro_version: '24.04'
+    kernel: 6.8.0-31-generic
+    arch: x86_64
+    ram_mb: 8192
+    cpu_count: 4
+    selinux_mode: null
+    apparmor_active: true
+    domain_joined: false
+  docker:
+    detected: true
+    engine_version: 27.0.0
+    compose_version: 2.27.0
+    daemon_reachable: true
+    current_user_in_docker_group: true
+  network:
+    detected: true
+    interfaces:
+      eth0:
+        - 10.0.0.5
+    default_route_iface: eth0
+    listening_ports:
+      '22': sshd
+    egress_public_ip: 203.0.113.10
+  dns:
+    detected: true
+    hostname: dng.example.com
+    a_records:
+      1.1.1.1:
+        - 203.0.113.10
+    aaaa_records:
+      1.1.1.1: []
+    reverse_ptr: null
+    local_resolvers:
+      - 127.0.0.53
+  tls:
+    detected: true
+    answers_on_443: false
+    cn: null
+    sans: []
+    not_before: null
+    not_after: null
+    issuer: null
+    key_algorithm: null
+  time_sync:
+    detected: true
+    daemon: chronyd
+    sync_source: time.cloudflare.com
+    offset_seconds: 0.012
+  firewall:
+    detected: true
+    kind: ufw
+    active: true
+  duo_reachability:
+    detected: true
+    endpoints:
+      https://duo.com: 200
+answers:
+  deployment_scope: web_ssh_rdp_smb
+  idp: okta
+  public_hostname: dng.example.com
+  tls_strategy:
+    kind: existing_bundle
+    cert_path: /etc/ssl/dng/cert.pem
+    key_path: /etc/ssl/dng/key.pem
+    chain_path: null
+  wildcard_cert: true
+  load_balancer:
+    name: nginx
+    trusted_proxies:
+      - 10.0.0.0/8
+  internal_dns: split_horizon
+  seed_apps:
+    web_apps:
+      - name: web-1
+      - name: web-2
+    ssh_relays:
+      - name: ssh-1
+    rdp_relays:
+      - name: rdp-1
+requires_extra_dns_container: true
+dng_version_minimum: 3.3.0
