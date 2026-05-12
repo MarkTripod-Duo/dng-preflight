@@ -26,6 +26,8 @@ dependencies = [
     "cryptography>=42",
     "jinja2>=3.1",
     "questionary>=2.0",
+    "click>=8.1",
+    "pyyaml>=6",
 ]
 
 [dependency-groups]
@@ -36,7 +38,11 @@ dev = [
     "ruff>=0.4",
     "ty",
     "pre-commit>=3.7",
+    "types-pyyaml>=6",
 ]
+
+[project.scripts]
+dng-preflight = "dng_preflight.cli:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/dng_preflight"]

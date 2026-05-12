@@ -1,0 +1,85 @@
+# Representative EnvironmentSnapshot for a clean Ubuntu 24.04 + Docker host.
+#
+# This fixture is hand-curated rather than captured live so that tests are
+# deterministic. To refresh it from a real host run:
+#
+#     dng-preflight inspect --hostname dng.example.com --output tests/fixtures/snapshots/ubuntu-2404-clean.yaml
+#
+# from a freshly-installed Ubuntu 24.04 box with Docker Engine and the Compose
+# plugin installed. Review the diff carefully — field names should not change
+# without a matching model update.
+
+captured_at: '2026-05-12T12:00:00+00:00'
+hostname_planned: dng.example.com
+system:
+  detected: true
+  platform: linux
+  distro: ubuntu
+  distro_version: '24.04'
+  kernel: 6.8.0-31-generic
+  arch: x86_64
+  ram_mb: 8192
+  cpu_count: 4
+  selinux_mode: null
+  apparmor_active: true
+  domain_joined: false
+docker:
+  detected: true
+  engine_version: 27.0.3
+  compose_version: v2.27.0
+  daemon_reachable: true
+  current_user_in_docker_group: true
+network:
+  detected: true
+  interfaces:
+    lo:
+      - 127.0.0.1
+      - '::1'
+    eth0:
+      - 10.0.0.42
+      - 'fe80::a00:27ff:fe4e:66a1'
+  default_route_iface: eth0
+  listening_ports:
+    22: sshd
+  egress_public_ip: 203.0.113.10
+dns:
+  detected: true
+  hostname: dng.example.com
+  a_records:
+    1.1.1.1:
+      - 203.0.113.10
+    8.8.8.8:
+      - 203.0.113.10
+    9.9.9.9:
+      - 203.0.113.10
+  aaaa_records:
+    1.1.1.1: []
+    8.8.8.8: []
+    9.9.9.9: []
+  reverse_ptr: dng.example.com
+  local_resolvers:
+    - 127.0.0.53
+tls:
+  detected: true
+  answers_on_443: false
+  cn: null
+  sans: []
+  not_before: null
+  not_after: null
+  issuer: null
+  key_algorithm: null
+time_sync:
+  detected: true
+  daemon: chronyd
+  sync_source: time.cloudflare.com
+  offset_seconds: 0.012
+firewall:
+  detected: true
+  kind: ufw
+  active: true
+duo_reachability:
+  detected: true
+  endpoints:
+    https://duo.com: 200
+    https://api.duosecurity.com: 301
+    https://admin-d1.duosecurity.com: 301
