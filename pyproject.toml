@@ -46,6 +46,8 @@ dng-preflight = "dng_preflight.cli:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/dng_preflight"]
+# Hatchling's default file selector ships every file inside the packages,
+# including the *.j2 templates the generators load via Jinja2's PackageLoader.
 
 [tool.ruff]
 target-version = "py312"

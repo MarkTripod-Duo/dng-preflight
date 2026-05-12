@@ -236,3 +236,61 @@ def test_validate_requires_plan_path():
     result = runner.invoke(cli_module.cli, ["validate"])
     assert result.exit_code != 0
     assert "plan" in result.output.lower() or "missing" in result.output.lower()
+
+
+# -----------------------------------------------------------------------------
+# generate
+# -----------------------------------------------------------------------------
+
+
+def test_generate_writes_all_artifacts_to_output_dir(tmp_path: Path):
+    from dng_preflight.generators import ARTIFACT_NAMES
+
+    plan_path = _write_plan_file(tmp_path)
+    out_dir = tmp_path / "build"
+    runner = CliRunner()
+    result = runner.invoke(
+        cli_module.cli,
+        ["generate", "--from-file", str(plan_path), "--output-dir", str(out_dir)],
+    )
+    assert result.exit_code == 0, result.output
+    for name in ARTIFACT_NAMES:
+        assert (out_dir / name).exists(), f"missing artifact: {name}"
+
+
+def test_generate_refuses_when_hard_stops_fail(tmp_path: Path):
+    plan_path = _write_plan_file(tmp_path, time_offset=120.0)
+    runner = CliRunner()
+    result = runner.invoke(
+        cli_module.cli,
+        ["generate", "--from-file", str(plan_path), "--output-dir", str(tmp_path / "build")],
+    )
+    assert result.exit_code == 2
+    # Output dir should not be populated when generation is refused.
+    assert not (tmp_path / "build" / "scripted-config.yaml").exists()
+
+
+def test_generate_with_override_succeeds_past_hard_stop(tmp_path: Path):
+    plan_path = _write_plan_file(tmp_path, time_offset=120.0)
+    out_dir = tmp_path / "build"
+    runner = CliRunner()
+    result = runner.invoke(
+        cli_module.cli,
+        [
+            "generate",
+            "--from-file",
+            str(plan_path),
+            "--output-dir",
+            str(out_dir),
+            "--skip-time-check",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert (out_dir / "scripted-config.yaml").exists()
+
+
+def test_generate_requires_from_file():
+    runner = CliRunner()
+    result = runner.invoke(cli_module.cli, ["generate"])
+    assert result.exit_code != 0
+    assert "from-file" in result.output.lower() or "missing" in result.output.lower()

@@ -12,6 +12,7 @@ import yaml
 
 from dng_preflight import __version__
 from dng_preflight.discovery.aggregator import collect
+from dng_preflight.generators import generate_all
 from dng_preflight.interview.engine import run as run_interview
 from dng_preflight.interview.prompt import questionary_provider
 from dng_preflight.models.config import DngConfig, build_config
@@ -159,6 +160,42 @@ def validate_cmd(
     overrides = _collect_overrides(allow_public_admin, allow_domain_joined, skip_time_check)
     _report_violations_and_exit(config, overrides)
     click.echo("OK: no hard-stop violations", err=True)
+
+
+@cli.command("generate")
+@click.option(
+    "--from-file",
+    "plan_path",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    help="Path to a saved PLAN.yaml.",
+)
+@click.option(
+    "--output-dir",
+    "output_dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=Path("./dng-build"),
+    show_default=True,
+    help="Directory to write generated artifacts into.",
+)
+@click.option("--allow-public-admin", is_flag=True, help="Override the public-admin hard stop.")
+@click.option("--allow-domain-joined", is_flag=True, help="Override the domain-joined hard stop.")
+@click.option("--skip-time-check", is_flag=True, help="Override the NTP-offset hard stop.")
+def generate_cmd(
+    plan_path: Path,
+    output_dir: Path,
+    allow_public_admin: bool,
+    allow_domain_joined: bool,
+    skip_time_check: bool,
+) -> None:
+    """Generate every deployable artifact from a saved plan."""
+    config = DngConfig.model_validate(yaml.safe_load(plan_path.read_text()))
+    overrides = _collect_overrides(allow_public_admin, allow_domain_joined, skip_time_check)
+    _report_violations_and_exit(config, overrides)
+    written = generate_all(config, output_dir)
+    click.echo(f"wrote {len(written)} artifact(s) to {output_dir}:", err=True)
+    for path in written:
+        click.echo(f"  - {path.name}", err=True)
 
 
 if __name__ == "__main__":  # pragma: no cover
